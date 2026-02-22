@@ -1,13 +1,13 @@
 // --- Project Images Configuration ---
 // Add, remove, or reorder images here.
 const projectImages = [
-    { src: "images/1.JPG", title: "Trockenbau" },
-    { src: "images/2.JPG", title: "Innenausbau" },
-    { src: "images/3.JPG", title: "Akustik" },
-    { src: "images/4.JPG", title: "Details" },
-    { src: "images/6th.webp", title: "Renovierung" },
-    { src: "images/7.JPG", title: "Modernisierung" },
-    { src: "images/9.JPG", title: "Projekt 9" },
+    { src: "1.JPG", title: "Trockenbau" },
+    { src: "2.JPG", title: "Innenausbau" },
+    { src: "3.JPG", title: "Akustik" },
+    { src: "4.JPG", title: "Details" },
+    { src: "6th.webp", title: "Renovierung" },
+    { src: "7.JPG", title: "Modernisierung" },
+    { src: "9.JPG", title: "Projekt 9" },
     { src: "images/10.JPG", title: "Projekt 10" },
     { src: "images/11.JPG", title: "Projekt 11" },
     { src: "images/12.JPG", title: "Projekt 12" },
