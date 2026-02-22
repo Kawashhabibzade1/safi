@@ -8,7 +8,7 @@ const projectImages = [
     { src: "6th.webp", title: "Renovierung" },
     { src: "7.JPG", title: "Modernisierung" },
     { src: "9.JPG", title: "Projekt 9" },
-    { src: "images/10.JPG", title: "Projekt 10" },
+    { src: "10.JPG", title: "Projekt 10" },
     { src: "images/11.JPG", title: "Projekt 11" },
     { src: "images/12.JPG", title: "Projekt 12" },
     { src: "images/13.JPG", title: "Projekt 13" },
