@@ -5,39 +5,58 @@
 // ============================================================
 
 // --- Project Images Configuration ---
-const projectImages = [
-    { src: "1.JPG",  title: "Trockenbau" },
-    { src: "2.JPG",  title: "Innenausbau" },
-    { src: "3.JPG",  title: "Akustik" },
-    { src: "4.JPG",  title: "Details" },
-    { src: "6th.webp", title: "Renovierung" },
-    { src: "7.JPG",  title: "Modernisierung" },
-    { src: "9.JPG",  title: "Projekt 9" },
-    { src: "10.JPG", title: "Projekt 10" },
-    { src: "images/11.JPG", title: "Projekt 11" },
-    { src: "images/12.JPG", title: "Projekt 12" },
-    { src: "images/13.JPG", title: "Projekt 13" },
-    { src: "images/14.JPG", title: "Projekt 14" },
-    { src: "images/15.JPG", title: "Projekt 15" },
-    { src: "images/16.JPG", title: "Projekt 16" },
-    { src: "images/17.JPG", title: "Projekt 17" },
-    { src: "images/18.JPG", title: "Projekt 18" },
-    { src: "images/19.JPG", title: "Projekt 19" },
-    { src: "images/20.JPG", title: "Projekt 20" },
-    { src: "images/21.JPG", title: "Projekt 21" },
-    { src: "images/22.webp", title: "Projekt 22" },
-    { src: "images/23.jpg", title: "Projekt 23" },
-    { src: "images/24.jpg", title: "Projekt 24" },
-    { src: "images/25.jpg", title: "Projekt 25" },
-    { src: "images/26.jpg", title: "Projekt 26" },
-    { src: "images/29.jpg", title: "Projekt 29" },
-    { src: "images/30.jpg", title: "Projekt 30" },
-    { src: "images/31.jpg", title: "Projekt 31" },
-    { src: "images/32.jpg", title: "Projekt 32" },
-    { src: "images/36.jpg", title: "Projekt 36" },
-    { src: "images/38.jpg", title: "Projekt 38" },
-    { src: "images/40.jpg", title: "Projekt 40" },
+const DEFAULT_PROJECT_IMAGES = [
+    { src: "1.JPG",  title: "Trockenbau & Wandverkleidung" },
+    { src: "2.JPG",  title: "Innenausbau & Deckensysteme" },
+    { src: "3.JPG",  title: "Akustikdecken Montage" },
+    { src: "4.JPG",  title: "Präzise Detailarbeit" },
+    { src: "5.JPG",  title: "Bodenverlegung & Ausbau" },
+    { src: "6th.webp", title: "Komplettrenovierung" },
+    { src: "7.JPG",  title: "Modernisierung & Raumgestaltung" },
+    { src: "8.JPG",  title: "Leichtbauwände & Isolation" },
+    { src: "9.JPG",  title: "Zargen- & Türeinbau" }
 ];
+
+let currentGalleryImages = DEFAULT_PROJECT_IMAGES;
+
+async function loadGalleryData() {
+    try {
+        const res = await fetch('gallery.json?t=' + Date.now());
+        if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                currentGalleryImages = data;
+                try {
+                    localStorage.setItem('safi_gallery_images', JSON.stringify(data));
+                } catch(e) {}
+                return data;
+            }
+        }
+    } catch(e) {
+        // Use local fallback
+    }
+    return getProjectImages();
+}
+
+function getProjectImages() {
+    try {
+        const stored = localStorage.getItem('safi_gallery_images');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                return parsed;
+            }
+        }
+    } catch(e) {
+        console.warn('Fehler beim Laden der Galerie:', e);
+    }
+    return currentGalleryImages || DEFAULT_PROJECT_IMAGES;
+}
+
+// Make accessible globally
+window.safiGetProjectImages = getProjectImages;
+window.safiLoadGalleryData = loadGalleryData;
+window.safiDefaultImages = DEFAULT_PROJECT_IMAGES;
 
 // --- Google Reviews Configuration ---
 const googleReviews = [
@@ -83,24 +102,100 @@ const googleReviews = [
 // ============================================================
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ── 1. RENDER CAROUSEL ──────────────────────────────────
+    // ── 1. RENDER CAROUSEL & LIGHTBOX ──────────────────────
     const track = document.getElementById('carousel-track');
-    if (track) {
+    const lightbox    = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const captionText = document.getElementById('caption');
+    const closeBtn    = document.querySelector('.close');
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function renderCarousel() {
+        if (!track) return;
         track.innerHTML = '';
-        projectImages.forEach(image => {
+        const currentImages = getProjectImages();
+        currentImages.forEach((image, index) => {
+            const safeTitle = escapeHtml(image.title || 'Projekt ' + (index + 1));
+            const safeSrc = encodeURI(image.src || '');
+
             const slide = document.createElement('div');
             slide.className = 'carousel-slide';
             slide.innerHTML = `
-                <img src="${image.src}" alt="${image.title}" loading="lazy">
+                <img src="${safeSrc}" alt="${safeTitle}" loading="lazy">
                 <div class="slide-content">
-                    <h3>${image.title}</h3>
+                    <h3>${safeTitle}</h3>
                 </div>
             `;
             track.appendChild(slide);
+
+            const img = slide.querySelector('img');
+            img.addEventListener('click', function () {
+                if (lightbox && lightboxImg) {
+                    lightbox.style.display = 'block';
+                    lightboxImg.src = safeSrc;
+                    if (captionText) {
+                        captionText.textContent = image.title || '';
+                    }
+                }
+            });
         });
     }
 
-    // ── 2. RENDER REVIEWS ───────────────────────────────────
+    renderCarousel();
+    loadGalleryData().then(() => {
+        renderCarousel();
+    });
+
+    // Listen for gallery updates from login/admin page
+    window.addEventListener('storage', function (e) {
+        if (e.key === 'safi_gallery_images') {
+            renderCarousel();
+        }
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', () => { if (lightbox) lightbox.style.display = 'none'; });
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target !== lightboxImg) lightbox.style.display = 'none';
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox?.style.display === 'block') {
+            lightbox.style.display = 'none';
+        }
+    });
+
+    // ── 2. CAROUSEL NAVIGATION ──────────────────────────────
+    const nextButton = document.querySelector('.carousel-nav.next');
+    const prevButton = document.querySelector('.carousel-nav.prev');
+
+    const getScrollAmount = () => {
+        const firstSlide = track?.querySelector('.carousel-slide');
+        if (!firstSlide) return 300;
+        return firstSlide.getBoundingClientRect().width + 16;
+    };
+
+    if (nextButton && track) {
+        nextButton.addEventListener('click', () => {
+            track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+        });
+    }
+    if (prevButton && track) {
+        prevButton.addEventListener('click', () => {
+            track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+        });
+    }
+
+    // ── 3. RENDER REVIEWS ───────────────────────────────────
     const reviewsTrack = document.getElementById('reviews-track');
     if (reviewsTrack) {
         reviewsTrack.innerHTML = '';
@@ -127,58 +222,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── 3. CAROUSEL NAVIGATION ──────────────────────────────
-    const slides = track ? Array.from(track.children) : [];
-    const nextButton = document.querySelector('.carousel-nav.next');
-    const prevButton = document.querySelector('.carousel-nav.prev');
-
-    const getScrollAmount = () => {
-        if (slides.length === 0) return 300;
-        return slides[0].getBoundingClientRect().width + 16;
-    };
-
-    if (nextButton && track) {
-        nextButton.addEventListener('click', () => {
-            track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
-        });
-    }
-    if (prevButton && track) {
-        prevButton.addEventListener('click', () => {
-            track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
-        });
-    }
-
-    // ── 4. LIGHTBOX ─────────────────────────────────────────
-    const lightbox    = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const captionText = document.getElementById('caption');
-    const closeBtn    = document.querySelector('.close');
-
-    document.querySelectorAll('.carousel-slide img').forEach(img => {
-        img.addEventListener('click', function () {
-            if (lightbox && lightboxImg) {
-                lightbox.style.display = 'block';
-                lightboxImg.src = this.src;
-                const slideContent = this.nextElementSibling;
-                if (slideContent && captionText) {
-                    captionText.innerHTML = slideContent.querySelector('h3')?.innerText || '';
-                }
-            }
-        });
-    });
-
-    if (closeBtn) closeBtn.addEventListener('click', () => { lightbox.style.display = 'none'; });
-    if (lightbox) {
-        lightbox.addEventListener('click', (e) => {
-            if (e.target !== lightboxImg) lightbox.style.display = 'none';
-        });
-    }
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox?.style.display === 'block') {
-            lightbox.style.display = 'none';
-        }
-    });
-
     // ── 5. MOBILE MENU ──────────────────────────────────────
     const mobileMenu = document.querySelector('.menu-toggle');
     const navMenu    = document.querySelector('nav ul');
@@ -204,6 +247,16 @@ document.addEventListener('DOMContentLoaded', function () {
             if (headerEl) headerEl.classList.remove('menu-open');
             document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
         }));
+
+        // Close mobile dropdown when tapping anywhere outside
+        document.addEventListener('click', (e) => {
+            if (navMenu.classList.contains('active') && !mobileMenu.contains(e.target) && !navMenu.contains(e.target)) {
+                mobileMenu.classList.remove('is-active');
+                navMenu.classList.remove('active');
+                if (headerEl) headerEl.classList.remove('menu-open');
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+            }
+        });
     }
 
     // ── 6. HEADER SHRINK ON SCROLL ──────────────────────────
@@ -516,14 +569,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             /* Active nav link gold underline */
             nav a.nav-active {
-                color: #F5C518 !important;
+                color: #C89600 !important;
             }
             nav a.nav-active::after {
                 width: 100% !important;
+                background: #C89600 !important;
             }
-            /* Glowing gold border on review card hover */
+            /* Glowing gold shadow on review card hover */
             .review-card:hover {
-                box-shadow: 0 0 20px rgba(245,197,24,0.2), 0 10px 30px rgba(0,0,0,0.3) !important;
+                box-shadow: 0 12px 32px rgba(0,0,0,0.1), 0 0 16px rgba(245,197,24,0.25) !important;
             }
             /* Feature item entrance */
             .feature-item.revealed {
