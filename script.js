@@ -411,18 +411,18 @@ document.addEventListener('DOMContentLoaded', function () {
             return {
                 x:     Math.random() * W,
                 y:     Math.random() * H,
-                r:     Math.random() * 2 + 0.5,
-                vx:    (Math.random() - 0.5) * 0.4,
-                vy:    -Math.random() * 0.6 - 0.2,
-                alpha: Math.random() * 0.5 + 0.1,
+                r:     Math.random() * 2.5 + 1.2,
+                vx:    (Math.random() - 0.5) * 0.45,
+                vy:    -Math.random() * 0.7 - 0.25,
+                alpha: Math.random() * 0.5 + 0.4,
                 life:  0,
-                maxLife: Math.random() * 200 + 100
+                maxLife: Math.random() * 220 + 100
             };
         }
 
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 80; i++) {
                 const p = createParticle();
                 p.life = Math.random() * p.maxLife; // stagger
                 particles.push(p);
@@ -437,15 +437,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 p.life++;
 
                 const t = p.life / p.maxLife;
-                const a = t < 0.3 ? t / 0.3 : t > 0.7 ? (1 - t) / 0.3 : 1;
+                const a = t < 0.2 ? t / 0.2 : t > 0.7 ? (1 - t) / 0.3 : 1;
 
+                ctx.save();
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = 'rgba(245, 197, 24, 0.9)';
                 ctx.fillStyle = `rgba(${GOLD[0]},${GOLD[1]},${GOLD[2]},${p.alpha * a})`;
                 ctx.fill();
+                ctx.restore();
 
-                if (p.life >= p.maxLife) {
+                if (p.life >= p.maxLife || p.y < -10) {
                     particles[idx] = createParticle();
+                    particles[idx].y = H + 10;
                     particles[idx].life = 0;
                 }
             });
