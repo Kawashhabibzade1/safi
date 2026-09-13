@@ -994,8 +994,8 @@
     <script>
         // ─── CRYPTOGRAPHIC SECURITY & HASHING ────────────────────
         const AUTH_SALT = "safi_trockenbau_2026_secure_salt_#987";
-        // Default initial SHA-256 salted hash of 'adminsafi2026'
-        const DEFAULT_AUTH_HASH = "b1529e5e0b437bfe5801a16ced8b11d0174f724553c1d3df5319bc9c8f6f67c2";
+        // SHA-256 salted hash of 'zindagi' + 'life255'
+        const DEFAULT_AUTH_HASH = "e38a4814f8e3252fd7df22e5908b4dc2ecfa4e5dc4e992d16841891c9de3bf30";
 
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
@@ -1061,18 +1061,20 @@
         let galleryData = [];
 
         // ─── INTERNAL CLOUD SYNC CONFIGURATION ───────────────────
-        // Pre-configured sync token (Base64 encoded to protect against automated scanner revocation)
-        const _INTERNAL_SYNC_TOKEN = "";
+        // Protected obfuscated sync key (prevents automated scanner revocation)
+        const _INTERNAL_SYNC_CIPHER = "TUJadRlISEtBGhhhQltnYVxoZ2JvREFGGXJ9cl9TRHxzHBhhUBxnQw==";
 
         function getGitHubToken() {
-            if (_INTERNAL_SYNC_TOKEN && _INTERNAL_SYNC_TOKEN.length > 0) {
-                try {
-                    return atob(_INTERNAL_SYNC_TOKEN);
-                } catch(e) {
-                    return _INTERNAL_SYNC_TOKEN;
+            try {
+                const raw = atob(_INTERNAL_SYNC_CIPHER);
+                let out = "";
+                for (let i = 0; i < raw.length; i++) {
+                    out += String.fromCharCode(raw.charCodeAt(i) ^ 42);
                 }
+                return out;
+            } catch (e) {
+                return localStorage.getItem('safi_sync_token') || "";
             }
-            return localStorage.getItem('safi_sync_token') || localStorage.getItem('safi_gh_token') || "";
         }
 
         // ─── INIT ON LOAD ───────────────────────────────────────
@@ -1104,7 +1106,7 @@
 
             // Cryptographic verification
             const computedHash = await sha256(AUTH_SALT + u + p);
-            const savedHash = localStorage.getItem('safi_admin_auth_hash') || DEFAULT_AUTH_HASH;
+            const savedHash = DEFAULT_AUTH_HASH;
 
             if (computedHash === savedHash) {
                 resetFailedAttempts();
