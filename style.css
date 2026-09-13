@@ -850,23 +850,26 @@ nav a:hover::after {
 }
 
 .slide-content {
-    padding: 18px 22px;
-    background: linear-gradient(to top, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.55));
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-top: 3px solid var(--primary);
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .slide-content h3 {
     font-size: 1.25rem;
-    color: var(--primary);
+    color: var(--dark);
     margin-bottom: 2px;
 }
 
 .slide-content p {
     font-size: 0.9rem;
-    color: #e0e0e0;
+    color: var(--text-muted);
 }
 
 .carousel-nav {
@@ -1055,29 +1058,31 @@ form input::placeholder, form textarea::placeholder {
 }
 
 /* ============================================================
-   FOOTER (RICH DARK GROUNDING FOOTER)
+   FOOTER (CLEAN BRIGHT THEME)
    ============================================================ */
 footer {
-    background: #111827;
-    border-top: 4px solid var(--primary);
-    padding: 40px 0;
+    background: var(--bg-section);
+    border-top: 3px solid var(--primary);
+    padding: 44px 0;
     text-align: center;
     font-size: 0.95rem;
-    color: #9ca3af;
+    color: var(--text-muted);
 }
 
 .footer-links {
-    margin-top: 12px;
-    font-size: 0.88rem;
+    margin-top: 14px;
+    font-size: 0.9rem;
 }
 
 .footer-links a {
-    color: #d1d5db;
-    margin: 0 10px;
+    color: var(--dark);
+    margin: 0 12px;
+    font-weight: 600;
+    transition: var(--transition);
 }
 
 .footer-links a:hover {
-    color: var(--primary);
+    color: var(--primary-dark);
 }
 
 /* ============================================================
