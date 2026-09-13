@@ -87,22 +87,7 @@
             display: block;
         }
 
-        .admin-brand-title {
-            font-size: 1.35rem;
-            color: var(--dark);
-            letter-spacing: 2px;
-            line-height: 1;
-        }
 
-        .admin-brand-badge {
-            font-size: 0.75rem;
-            color: var(--primary-dark);
-            letter-spacing: 3px;
-            font-weight: 800;
-            text-transform: uppercase;
-            display: block;
-            margin-top: 3px;
-        }
 
         .nav-actions {
             display: flex;
@@ -815,10 +800,20 @@
                 grid-template-columns: 1fr;
             }
             .admin-nav {
-                padding: 12px 16px;
+                padding: 10px 18px;
+            }
+            .admin-logo img {
+                height: 42px;
+            }
+            .nav-actions {
+                gap: 10px;
+            }
+            .btn-nav-outline, .btn-logout {
+                padding: 8px 14px;
+                font-size: 0.9rem;
             }
             .dashboard-title-group h1 {
-                font-size: 1.9rem;
+                font-size: 1.8rem;
             }
             .admin-card {
                 padding: 20px 16px;
@@ -827,7 +822,29 @@
                 padding: 28px 20px;
                 margin-top: 20px;
             }
+        }
 
+        @media (max-width: 480px) {
+            .admin-nav {
+                padding: 8px 12px;
+            }
+            .admin-logo img {
+                height: 36px;
+            }
+            .nav-actions {
+                gap: 8px;
+            }
+            .btn-nav-outline, .btn-logout {
+                padding: 7px 11px;
+                font-size: 0.82rem;
+                letter-spacing: 0.5px;
+            }
+            .nav-btn-text-full {
+                display: none;
+            }
+            .container {
+                padding: 16px 12px;
+            }
         }
     </style>
 </head>
@@ -835,19 +852,15 @@
 <body>
     <!-- ─── PURE WHITE TOP NAVIGATION ────────────────────────── -->
     <header class="admin-nav">
-        <a href="index.html" class="admin-logo">
+        <a href="index.html" class="admin-logo" title="Zur Startseite">
             <img src="logo.png" alt="SAFI Logo">
-            <div>
-                <span class="admin-brand-title">SAFI TROCKENBAU</span>
-                <span class="admin-brand-badge">Gesicherter Admin-Bereich</span>
-            </div>
         </a>
 
         <div class="nav-actions">
-            <a href="index.html#projects" target="_blank" class="btn-nav-outline">
-                <i class="fas fa-external-link-alt"></i> Website Vorschau
+            <a href="index.html#projects" target="_blank" class="btn-nav-outline" title="Website Vorschau">
+                <i class="fas fa-external-link-alt"></i> <span class="nav-btn-text-full">Website </span>Vorschau
             </a>
-            <button id="btn-logout" class="btn-logout" style="display: none;" onclick="logout()">
+            <button id="btn-logout" class="btn-logout" style="display: none;" onclick="logout()" title="Abmelden">
                 <i class="fas fa-sign-out-alt"></i> Abmelden
             </button>
         </div>
